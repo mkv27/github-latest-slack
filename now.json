@@ -2,6 +2,7 @@
 	"env": [
 		"TOKEN_EVENTS",
 		"TOKEN_ALERTS",
-		"TOKEN_PM"
+		"TOKEN_PM",
+		"TIME_INTERVAL"
 	]
 }
