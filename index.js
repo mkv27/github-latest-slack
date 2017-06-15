@@ -3,8 +3,7 @@ const ms = require('ms')
 const repos = require('./repos.json')
 
 // Create keys
-let data = repos
-
+let data = Object.assign([], repos)
 
 module.exports = async (req, res) => {
 	res.setHeader('Access-Control-Allow-Origin', '*')
@@ -14,7 +13,7 @@ module.exports = async (req, res) => {
 
 // Cache data now and every X ms
 cacheData()
-setInterval(cacheData, ms('30m'))
+setInterval(cacheData, ms('2m'))
 
 const log = (text) => {
 	return slack(text, process.env.TOKEN_EVENTS)
@@ -70,7 +69,7 @@ async function fetchData(key, repo, logs) {
 
 		logs.log =  logs.log + '\n' + `Re-built now releases cache. *_${repo}_* ` +
 							`Elapsed: ${(new Date() - start)}ms`
-
+							
 		if(tagPrev != data[key].tag && tagPrev != undefined){
 			pm(`New Release on *_${repo}_*:\n ${data[key].tag} \n ${data[key].url}`)
 		}
@@ -92,9 +91,8 @@ async function cacheData() {
 		await fetchData(key, repo, logs)
 	}
 
-	
 	if(logs.log != "") log(logs.log)
-
+	
 	if(logs.error != "")  logError(logs.error)
 
 }
