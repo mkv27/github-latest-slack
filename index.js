@@ -11,9 +11,11 @@ module.exports = async (req, res) => {
 	return data
 }
 
+const interval = process.env.TIME_INTERVAL || '30m'
+
 // Cache data now and every X ms
 cacheData()
-setInterval(cacheData, ms('2m'))
+setInterval(cacheData, ms(interval))
 
 const log = (text) => {
 	return slack(text, process.env.TOKEN_EVENTS)
@@ -69,7 +71,7 @@ async function fetchData(key, repo, logs) {
 
 		logs.log =  logs.log + '\n' + `Re-built now releases cache. *_${repo}_* ` +
 							`Elapsed: ${(new Date() - start)}ms`
-							
+
 		if(tagPrev != data[key].tag && tagPrev != undefined){
 			pm(`New Release on *_${repo}_*:\n ${data[key].tag} \n ${data[key].url}`)
 		}
