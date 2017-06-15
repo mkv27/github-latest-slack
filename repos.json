@@ -1,0 +1,8 @@
+[
+	"zeit/now-cli",
+	"zeit/now-desktop",
+	"zeit/micro",
+	"zeit/micro-cluster",
+	"zeit/next.js",
+	"nuxt/nuxt.js"
+]

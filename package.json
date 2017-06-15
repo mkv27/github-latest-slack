@@ -1,0 +1,14 @@
+{
+  "name": "github-latest-slack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "micro"
+  },
+  "dependencies": {
+    "micro": "^7.3.3",
+    "ms": "^2.0.0",
+    "node-fetch": "^1.7.1"
+  }
+}
