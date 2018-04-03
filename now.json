@@ -3,6 +3,6 @@
 		"TOKEN_EVENTS",
 		"TOKEN_ALERTS",
 		"TOKEN_PM",
-		"TIME_INTERVAL"
+		"TOKEN_GITHUB"
 	]
 }

@@ -41,11 +41,47 @@ async function fetchData(key, repo, logs) {
 
 	const start = Date.now()
 
-	let res = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
-			headers: {
-			  Accept: 'application/vnd.github.preview'
-			}
-		})
+	const arrayRepo = repo.split("/")
+	const owner = arrayRepo[0]
+	const name = arrayRepo[1]
+	const query = `
+	{
+	  repository(owner: "${owner}", name: "${name}") {
+	    refs(refPrefix: "refs/tags/", last: 1, orderBy: {field: TAG_COMMIT_DATE, direction: ASC}) {
+	      nodes {
+	        name
+	      }
+	      edges {
+	        node {
+	          name
+	          target {
+	            ... on Commit {
+	              message
+	            }
+	          }
+	        }
+	      }
+	    }
+	  }
+	}
+	`
+
+	// let res = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
+	// 		headers: {
+	// 		  Accept: 'application/vnd.github.preview'
+	// 		}
+	// 	})
+
+	let res = await fetch('https://api.github.com/graphql',{
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/graphql',
+			'Authorization': `Bearer ${process.env.TOKEN_GITHUB}`
+		},
+		body: JSON.stringify({query})
+	})
+
+
 
 	if (res.status !== 200) {
 		logs.error = logs.error + '\n'+ `Non-200 response code from GitHub *_${repo}_*: ${res.status}`
@@ -60,13 +96,18 @@ async function fetchData(key, repo, logs) {
 
 		let tagPrev = data[key].tag
 
+		// data[key] = {
+		//   tag: data_.tag_name,
+		//   url: data_.html_url,
+		//   assets: data_.assets.map(({name, browser_download_url}) => ({
+		//     name,
+		//     url: browser_download_url
+		//   }))
+		// }
+		const tagName = data_.data.repository.refs.edges[0].node.name
 		data[key] = {
-		  tag: data_.tag_name,
-		  url: data_.html_url,
-		  assets: data_.assets.map(({name, browser_download_url}) => ({
-		    name,
-		    url: browser_download_url
-		  }))
+		  tag: tagName,
+		  url: `https://github.com/${repo}/releases/tag/${tagName}`//"https://github.com/zeit/now-cli/releases/tag/10.2.2
 		}
 
 		logs.log =  logs.log + '\n' + `Re-built now releases cache. *_${repo}_* ` +
@@ -93,8 +134,8 @@ async function cacheData() {
 		await fetchData(key, repo, logs)
 	}
 
-	if(logs.log != "") log(logs.log)
+	//if(logs.log != "") log(logs.log)
 	
-	if(logs.error != "")  logError(logs.error)
+	if(logs.error != "") console.error("\x1b[31m", logs.error) //logError(logs.error)
 
 }

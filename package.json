@@ -7,7 +7,7 @@
     "start": "micro"
   },
   "dependencies": {
-    "micro": "^7.3.3",
+    "micro": "^8.0.1",
     "ms": "^2.0.0",
     "node-fetch": "^1.7.1"
   }

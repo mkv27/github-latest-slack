@@ -4,5 +4,9 @@
 	"zeit/micro",
 	"zeit/micro-cluster",
 	"zeit/next.js",
-	"nuxt/nuxt.js"
+	"nuxt/nuxt.js",
+	"zeit/micro-dev",
+	"braintree/card-validator",
+	"ionic-team/stencil",
+	"ionic-team/stencil-router"
 ]
