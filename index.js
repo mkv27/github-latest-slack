@@ -66,12 +66,6 @@ async function fetchData(key, repo, logs) {
 	}
 	`
 
-	// let res = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
-	// 		headers: {
-	// 		  Accept: 'application/vnd.github.preview'
-	// 		}
-	// 	})
-
 	let res = await fetch('https://api.github.com/graphql',{
 		method: 'POST',
 		headers: {
@@ -96,25 +90,19 @@ async function fetchData(key, repo, logs) {
 
 		let tagPrev = data[key].tag
 
-		// data[key] = {
-		//   tag: data_.tag_name,
-		//   url: data_.html_url,
-		//   assets: data_.assets.map(({name, browser_download_url}) => ({
-		//     name,
-		//     url: browser_download_url
-		//   }))
-		// }
 		const tagName = data_.data.repository.refs.edges[0].node.name
+		const nodeTarget = data_.data.repository.refs.edges[0].node.target
 		data[key] = {
 		  tag: tagName,
-		  url: `https://github.com/${repo}/releases/tag/${tagName}`//"https://github.com/zeit/now-cli/releases/tag/10.2.2
+		  url: `https://github.com/${repo}/releases/tag/${tagName}`,
+		  message: nodeTarget.message ? nodeTarget.message : ''
 		}
 
 		logs.log =  logs.log + '\n' + `Re-built now releases cache. *_${repo}_* ` +
 							`Elapsed: ${(new Date() - start)}ms`
 
 		if(tagPrev != data[key].tag && tagPrev != undefined){
-			pm(`New Release on *_${repo}_*:\n ${data[key].tag} \n ${data[key].url}`)
+			pm(`*_${repo}_*: ${data[key].tag} \n ${data[key].message} \n New Release: ${data[key].url}`)
 		}
 	}
 	catch(err){
@@ -134,8 +122,6 @@ async function cacheData() {
 		await fetchData(key, repo, logs)
 	}
 
-	//if(logs.log != "") log(logs.log)
-	
-	if(logs.error != "") console.error("\x1b[31m", logs.error) //logError(logs.error)
+	if(logs.error != "") console.error("\x1b[31m", logs.error)
 
 }
