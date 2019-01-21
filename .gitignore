@@ -3,6 +3,7 @@ node_modules
 
 # logs
 npm-debug.log
+*.log
 
 # OS
 .DS_Store
